@@ -3,6 +3,7 @@ package vsu.cs;
 import javax.vecmath.Matrix4d;
 import javax.vecmath.Point3d;
 import javax.vecmath.Point4d;
+import javax.vecmath.Quat4d;
 
 public class AffineBuilder implements AffineBuilderInterface {
     private Matrix4d matrix;
@@ -102,6 +103,20 @@ public class AffineBuilder implements AffineBuilderInterface {
     }
 
     @Override
+    public AffineBuilder rotateXQuat(double rotateX) {
+        Quat4d rotation = new Quat4d(
+                -Math.sin(rotateX/2),
+                0,
+                0,
+                Math.cos(rotateX/2)
+        );
+        Matrix4d matrixRotate = new Matrix4d();
+        matrixRotate.set(rotation);
+        this.matrix.mul(matrixRotate, this.matrix);
+        return this;
+    }
+
+    @Override
     public AffineBuilder rotateY(double rotateY) {
         Matrix4d matrixRotate = new Matrix4d(
                 Math.cos(rotateY), 0, Math.sin(rotateY), 0,
@@ -109,6 +124,22 @@ public class AffineBuilder implements AffineBuilderInterface {
                 -Math.sin(rotateY), 0, Math.cos(rotateY), 0,
                 0, 0, 0, 1
         );
+        this.matrix.mul(matrixRotate, this.matrix);
+        return this;
+    }
+
+
+
+    @Override
+    public AffineBuilder rotateYQuat(double rotateY) {
+        Quat4d rotation = new Quat4d(
+                0,
+                Math.sin(rotateY/2),
+                0,
+                Math.cos(rotateY/2)
+        );
+        Matrix4d matrixRotate = new Matrix4d();
+        matrixRotate.set(rotation);
         this.matrix.mul(matrixRotate, this.matrix);
         return this;
     }
@@ -121,6 +152,20 @@ public class AffineBuilder implements AffineBuilderInterface {
                 0, 0, 1, 0,
                 0, 0, 0, 1
         );
+        this.matrix.mul(matrixRotate, this.matrix);
+        return this;
+    }
+
+    @Override
+    public AffineBuilder rotateZQuat(double rotateZ) {
+        Quat4d rotation = new Quat4d(
+                0,
+                0,
+                -Math.sin(rotateZ/2),
+                Math.cos(rotateZ/2)
+        );
+        Matrix4d matrixRotate = new Matrix4d();
+        matrixRotate.set(rotation);
         this.matrix.mul(matrixRotate, this.matrix);
         return this;
     }

@@ -14,8 +14,11 @@ public interface AffineBuilderInterface {
     AffineBuilder scaleUniform(double uniformScale);
     AffineBuilder scale(double scaleX, double scaleY, double scaleZ);
     AffineBuilder rotateX(double rotateX);
+    AffineBuilder rotateXQuat(double rotateX);
     AffineBuilder rotateY(double rotateY);
+    AffineBuilder rotateYQuat(double rotateY);
     AffineBuilder rotateZ(double rotateZ);
+    AffineBuilder rotateZQuat(double rotateZ);
     AffineBuilder translateX(double translateX);
     AffineBuilder translateY(double translateY);
     AffineBuilder translateZ(double translateZ);
