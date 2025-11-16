@@ -7,9 +7,6 @@
   <version>1.0-SNAPSHOT</version>
   <packaging>jar</packaging>
 
-  <name>KGandG3</name>
-  <url>http://maven.apache.org</url>
-
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <junit.version>3.8.1</junit.version>
@@ -29,12 +26,6 @@
       <version>${vecmath.version}</version>
     </dependency>
 
-    <dependency>
-      <groupId>vsu.cs</groupId>
-      <artifactId>KGandG3</artifactId>
-      <version>1.0-SNAPSHOT</version>
-      <scope>test</scope>
-    </dependency>
     <dependency>
       <groupId>org.junit.jupiter</groupId>
       <artifactId>junit-jupiter</artifactId>

@@ -1,10 +1,9 @@
 package vsu.cs;
 
-import javax.vecmath.Matrix4d;
 import javax.vecmath.Point3d;
 
 public interface AffineBuilderInterface {
-    Matrix4d build();
+    CompositeTransformation build();
     Point3d transform(Point3d point);
 
 

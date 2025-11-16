@@ -1,220 +1,110 @@
 package vsu.cs;
 
-import javax.vecmath.Matrix4d;
+import vsu.cs.transformations.*;
+
 import javax.vecmath.Point3d;
-import javax.vecmath.Point4d;
-import javax.vecmath.Quat4d;
 
 public class AffineBuilder implements AffineBuilderInterface {
-    private Matrix4d matrix;
+    private final CompositeTransformation composite;
 
     public AffineBuilder() {
-        this.matrix = new Matrix4d(
-                1, 0, 0, 0,
-                0, 1, 0, 0,
-                0, 0, 1, 0,
-                0, 0, 0, 1
-        );
+        this.composite = new CompositeTransformation();
     }
 
-    @Override
-    public Matrix4d build() {
-        return new Matrix4d(matrix);
-    }
-
-    @Override
-    public Point3d transform(Point3d point) {
-        Point4d point4d = new Point4d(point.getX(), point.getY(), point.getZ(), 1.0);
-        Point4d result = new Point4d();
-        this.matrix.transform(point4d, result);
-        return new Point3d(result.getX()/result.getW(), result.getY()/result.getW(), result.getZ()/result.getW());
+    public AffineBuilder scale(double sx, double sy, double sz) {
+        composite.add(new ScaleTransformation(sx, sy, sz));
+        return this;
     }
 
     @Override
     public AffineBuilder scaleX(double scaleX) {
-        Matrix4d matrixScale = new Matrix4d(
-                scaleX, 0, 0, 0,
-                0, 1, 0, 0,
-                0, 0, 1, 0,
-                0, 0, 0, 1
-        );
-        this.matrix.mul(matrixScale, this.matrix);
+        composite.add(new ScaleTransformation(scaleX, 1, 1));
         return this;
     }
 
     @Override
     public AffineBuilder scaleY(double scaleY) {
-        Matrix4d matrixScale = new Matrix4d(
-                1, 0, 0, 0,
-                0, scaleY, 0, 0,
-                0, 0, 1, 0,
-                0, 0, 0, 1
-        );
-        this.matrix.mul(matrixScale, this.matrix);
+        composite.add(new ScaleTransformation(1, scaleY, 1));
         return this;
     }
 
     @Override
     public AffineBuilder scaleZ(double scaleZ) {
-        Matrix4d matrixScale = new Matrix4d(
-                1, 0, 0, 0,
-                0, 1, 0, 0,
-                0, 0, scaleZ, 0,
-                0, 0, 0, 1
-        );
-        this.matrix.mul(matrixScale, this.matrix);
+        composite.add(new ScaleTransformation(1, 1, scaleZ));
         return this;
     }
 
     @Override
     public AffineBuilder scaleUniform(double uniformScale) {
-        Matrix4d matrixScale = new Matrix4d(
-                uniformScale, 0, 0, 0,
-                0, uniformScale, 0, 0,
-                0, 0, uniformScale, 0,
-                0, 0, 0, 1
-        );
-        this.matrix.mul(matrixScale, this.matrix);
-        return this;
-    }
-
-    @Override
-    public AffineBuilder scale(double scaleX, double scaleY, double scaleZ) {
-        Matrix4d matrixScale = new Matrix4d(
-                scaleX, 0, 0, 0,
-                0, scaleY, 0, 0,
-                0, 0, scaleZ, 0,
-                0, 0, 0, 1
-        );
-        this.matrix.mul(matrixScale, this.matrix);
+        composite.add(new ScaleTransformation(uniformScale));
         return this;
     }
 
     @Override
     public AffineBuilder rotateX(double rotateX) {
-        Matrix4d matrixRotate = new Matrix4d(
-                1, 0, 0, 0,
-                0, Math.cos(rotateX), Math.sin(rotateX), 0,
-                0, -Math.sin(rotateX), Math.cos(rotateX), 0,
-                0, 0, 0, 1
-        );
-        this.matrix.mul(matrixRotate, this.matrix);
+        composite.add(new RotateTransformation(Axis.X, rotateX));
         return this;
     }
 
     @Override
     public AffineBuilder rotateXQuat(double rotateX) {
-        Quat4d rotation = new Quat4d(
-                -Math.sin(rotateX/2),
-                0,
-                0,
-                Math.cos(rotateX/2)
-        );
-        Matrix4d matrixRotate = new Matrix4d();
-        matrixRotate.set(rotation);
-        this.matrix.mul(matrixRotate, this.matrix);
+        composite.add(new RotateTransformationOnQuad(Axis.X, rotateX));
         return this;
     }
 
     @Override
     public AffineBuilder rotateY(double rotateY) {
-        Matrix4d matrixRotate = new Matrix4d(
-                Math.cos(rotateY), 0, Math.sin(rotateY), 0,
-                0, 1, 0, 0,
-                -Math.sin(rotateY), 0, Math.cos(rotateY), 0,
-                0, 0, 0, 1
-        );
-        this.matrix.mul(matrixRotate, this.matrix);
+        composite.add(new RotateTransformation(Axis.Y, rotateY));
         return this;
     }
 
-
-
     @Override
     public AffineBuilder rotateYQuat(double rotateY) {
-        Quat4d rotation = new Quat4d(
-                0,
-                Math.sin(rotateY/2),
-                0,
-                Math.cos(rotateY/2)
-        );
-        Matrix4d matrixRotate = new Matrix4d();
-        matrixRotate.set(rotation);
-        this.matrix.mul(matrixRotate, this.matrix);
+        composite.add(new RotateTransformationOnQuad(Axis.Y, rotateY));
         return this;
     }
 
     @Override
     public AffineBuilder rotateZ(double rotateZ) {
-        Matrix4d matrixRotate = new Matrix4d(
-                Math.cos(rotateZ), Math.sin(rotateZ), 0, 0,
-                -Math.sin(rotateZ), Math.cos(rotateZ), 0, 0,
-                0, 0, 1, 0,
-                0, 0, 0, 1
-        );
-        this.matrix.mul(matrixRotate, this.matrix);
+        composite.add(new RotateTransformation(Axis.Z, rotateZ));
         return this;
     }
 
     @Override
     public AffineBuilder rotateZQuat(double rotateZ) {
-        Quat4d rotation = new Quat4d(
-                0,
-                0,
-                -Math.sin(rotateZ/2),
-                Math.cos(rotateZ/2)
-        );
-        Matrix4d matrixRotate = new Matrix4d();
-        matrixRotate.set(rotation);
-        this.matrix.mul(matrixRotate, this.matrix);
+        composite.add(new RotateTransformationOnQuad(Axis.Z, rotateZ));
         return this;
     }
 
     @Override
     public AffineBuilder translateX(double translateX) {
-        Matrix4d matrixTranslate = new Matrix4d(
-                1, 0, 0, translateX,
-                0, 1, 0, 0,
-                0, 0, 1, 0,
-                0, 0, 0, 1
-        );
-        this.matrix.mul(matrixTranslate, this.matrix);
+        composite.add(new TranslationTransformation(translateX, 0, 0));
         return this;
     }
 
     @Override
     public AffineBuilder translateY(double translateY) {
-        Matrix4d matrixTranslate = new Matrix4d(
-                1, 0, 0, 0,
-                0, 1, 0, translateY,
-                0, 0, 1, 0,
-                0, 0, 0, 1
-        );
-        this.matrix.mul(matrixTranslate, this.matrix);
-        return this;
+       composite.add(new TranslationTransformation(0, translateY, 0));
+       return this;
     }
 
     @Override
     public AffineBuilder translateZ(double translateZ) {
-        Matrix4d matrixTranslate = new Matrix4d(
-                1, 0, 0, 0,
-                0, 1, 0, 0,
-                0, 0, 1, translateZ,
-                0, 0, 0, 1
-        );
-        this.matrix.mul(matrixTranslate, this.matrix);
+        composite.add(new TranslationTransformation(0, 0, translateZ));
         return this;
     }
 
     @Override
-    public AffineBuilder translate(double translateX, double translateY, double translateZ) {
-        Matrix4d matrixTranslate = new Matrix4d(
-                1, 0, 0, translateX,
-                0, 1, 0, translateY,
-                0, 0, 1, translateZ,
-                0, 0, 0, 1
-        );
-        this.matrix.mul(matrixTranslate, this.matrix);
+    public AffineBuilder translate(double tx, double ty, double tz) {
+        composite.add(new TranslationTransformation(tx, ty, tz));
         return this;
+    }
+
+    public CompositeTransformation build() {
+        return composite;
+    }
+
+    public Point3d transform(Point3d point) {
+        return composite.apply(point);
     }
 }
