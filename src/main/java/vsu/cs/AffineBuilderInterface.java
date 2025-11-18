@@ -1,10 +1,13 @@
 package vsu.cs;
 
+import vsu.cs.transformations.Axis;
+import vsu.cs.transformations.Transformation;
+
 import javax.vecmath.Point3d;
 
 public interface AffineBuilderInterface {
-    CompositeTransformation build();
-    Point3d transform(Point3d point);
+    Transformation build();
+    //Point3d transform(Point3d point);
 
 
     AffineBuilder scaleX(double scaleX);
@@ -21,5 +24,6 @@ public interface AffineBuilderInterface {
     AffineBuilder translateX(double translateX);
     AffineBuilder translateY(double translateY);
     AffineBuilder translateZ(double translateZ);
+    //AffineBuilder translate(Axis axis, double value);
     AffineBuilder translate(double translateX, double translateY, double translateZ);
 }
