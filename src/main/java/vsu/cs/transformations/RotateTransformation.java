@@ -44,11 +44,4 @@ public class RotateTransformation implements Transformation {
         matrix.set(rotation);
         return matrix;
     }
-
-    @Override
-    public Point3d apply(Point3d point) {
-        Point3d result = new Point3d();
-        this.getMatrix().transform(point, result);
-        return result;
-    }
 }

@@ -5,5 +5,10 @@ import javax.vecmath.Point3d;
 
 public interface Transformation {
     Matrix4d getMatrix();
-    Point3d apply (Point3d point);
+
+    default Point3d apply (Point3d point) {
+        Point3d result = new Point3d();
+        this.getMatrix().transform(point, result);
+        return result;
+    }
 }

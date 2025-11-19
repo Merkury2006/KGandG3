@@ -25,11 +25,4 @@ public class ScaleTransformation implements Transformation {
             0, 0, 0, 1
         );
     }
-
-    @Override
-    public Point3d apply(Point3d point) {
-        Point3d result = new Point3d();
-        this.getMatrix().transform(point, result);
-        return result;
-    }
 }

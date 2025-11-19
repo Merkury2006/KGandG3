@@ -2,10 +2,8 @@ package vsu.cs;
 
 import vsu.cs.transformations.*;
 
-import javax.vecmath.Point3d;
-
 public class AffineBuilder implements AffineBuilderInterface {
-    private final CompositeTransformation composite;
+    private CompositeTransformation composite;
 
     public AffineBuilder() {
         this.composite = new CompositeTransformation();
@@ -13,6 +11,17 @@ public class AffineBuilder implements AffineBuilderInterface {
 
     public AffineBuilder scale(double sx, double sy, double sz) {
         composite.add(new ScaleTransformation(sx, sy, sz));
+        return this;
+    }
+
+    @Override
+    public AffineBuilder scale(Axis axis, double value) {
+        switch (axis) {
+            case X -> this.scaleX(value);
+            case Y -> this.scaleY(value);
+            case Z -> this.scaleZ(value);
+            default -> throw new IllegalArgumentException("Неизвестная ось");
+        }
         return this;
     }
 
@@ -77,6 +86,28 @@ public class AffineBuilder implements AffineBuilderInterface {
     }
 
     @Override
+    public AffineBuilder rotate(Axis axis, double rotate) {
+        switch (axis) {
+            case X -> this.rotateX(rotate);
+            case Y -> this.rotateY(rotate);
+            case Z -> this.rotateZ(rotate);
+            default -> throw new IllegalArgumentException("Неизвестная ось");
+        }
+        return this;
+    }
+
+    @Override
+    public AffineBuilder rotateQuat(Axis axis, double rotate) {
+            switch (axis) {
+                case X -> this.rotateXQuat(rotate);
+                case Y -> this.rotateYQuat(rotate);
+                case Z -> this.rotateZQuat(rotate);
+                default -> throw new IllegalArgumentException("Неизвестная ось");
+            }
+            return this;
+    }
+
+    @Override
     public AffineBuilder translateX(double translateX) {
         composite.add(new TranslationTransformation(translateX, 0, 0));
         return this;
@@ -95,16 +126,36 @@ public class AffineBuilder implements AffineBuilderInterface {
     }
 
     @Override
+    public AffineBuilder translate(Axis axis, double value) {
+        switch (axis) {
+            case X -> this.translateX(value);
+            case Y -> this.translateY(value);
+            case Z -> this.translateZ(value);
+            default -> throw new IllegalArgumentException("Неизвестная ось");
+        }
+        return this;
+    }
+
+    @Override
     public AffineBuilder translate(double tx, double ty, double tz) {
         composite.add(new TranslationTransformation(tx, ty, tz));
         return this;
     }
 
-    public CompositeTransformation build() {
+    @Override
+    public Transformation build() {
         return composite;
     }
 
-    public Point3d transform(Point3d point) {
-        return composite.apply(point);
+    @Override
+    public SaveTransformation saveState() {
+        return new SaveTransformation(this.composite.getMatrix());
+    }
+
+    @Override
+    public AffineBuilder restoreState(SaveTransformation transformation) {
+        this.composite = new CompositeTransformation();
+        composite.add(transformation);
+        return this;
     }
 }
